@@ -1,6 +1,14 @@
 #include "State.h"
 #include <iostream>
 
+/*
+* Function: State ctor
+* Parameters: 
+*   int x: x dimension of the new state
+*   int y: y dimension of the new state
+*   int z: z dimension of the new state
+* description: create an empty state with the given dimensions
+*/
 State::State(int x, int y, int z)
 {
     for(int i = 0; i < x; i++)
@@ -14,6 +22,11 @@ State::State(int x, int y, int z)
     }
 }
 
+/*
+* Function: print
+* Parameters:
+* description: prints each horizontal layer of the state from botom to top
+*/
 void State::print()
 {
     for(int i = 0; i < state.size(); i++)
