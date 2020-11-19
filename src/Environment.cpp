@@ -1,8 +1,8 @@
 #include "Environment.h"
 
-Environment::Environment()
+Environment::Environment(Shape envShape)
 {
-
+    currentState = State(envShape.getX(), envShape.getY(), envShape.getZ());
 }
 
 vector<State> Environment::getPossibleStates(Shape shape)

@@ -8,7 +8,8 @@ class Environment
 private:
     State currentState;
 public:
-    Environment();
+    Environment() = default;
+    Environment(Shape envShape);
     vector<State> getPossibleStates(Shape shape);
     void updateState(State s);
     State getCurrentState();
