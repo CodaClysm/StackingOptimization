@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+using namespace std;
 class Shape
 {
 private:
@@ -12,5 +14,6 @@ public:
     int getY();
     int getZ();
     int getVolume();
+    vector<Shape> getUniqueOrientations();
 };
 

@@ -1,14 +1,14 @@
 #pragma once
 #include <vector>
-
+#include <string>
 using namespace std;
 class State
 {
 public:
     vector<vector<vector<bool>>> state;
-    State() = default;
-    State(int x, int y, int z);
-    void print();
+    State();
+    string toString();
+    string toString_h();
 
 };
 
