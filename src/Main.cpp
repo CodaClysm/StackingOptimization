@@ -10,7 +10,7 @@ int main() {
 	// Create logger
 	Logger::start(Level::INFO);
 
-	Shape s(10, 15, 10);
+	Shape s(20, 25, 20);
 	ControllerSettings::envShape = s;
 
 	Shape placedShape(3,4,5);

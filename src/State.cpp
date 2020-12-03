@@ -28,7 +28,7 @@ State::State()
 * Parameters:
 * Description: generates a string to represent the 3d state in vertical format. 
 */
-string State::toString_h()
+string State::toString()
 {
     string returnString = "\n";
 
