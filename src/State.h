@@ -9,6 +9,7 @@ public:
     State();
     string toString();
     string toString_h();
+    double getUtilization();
 
 };
 

@@ -4,6 +4,13 @@
 #include <math.h>
 using namespace std;
 
+Individual::Individual()
+{
+    chromosomes = Chromosomes();
+    shapesToPack = ControllerSettings::shapesToPack;
+    features = ControllerSettings::features;
+}
+
 Individual::Individual(Chromosomes c)
 {
     chromosomes = c;
@@ -64,4 +71,9 @@ State Individual::findBestPosition(vector<State> states)
 Environment Individual::getEnvironment()
 {
     return env;
+}
+
+Chromosomes Individual::getChromosomes()
+{
+    return chromosomes;
 }

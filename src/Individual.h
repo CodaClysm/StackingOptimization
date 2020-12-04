@@ -17,7 +17,9 @@ private:
     Chromosomes chromosomes;
 public:
     Individual(Chromosomes c);
+    Individual();
     void start();
     Environment getEnvironment();
+    Chromosomes getChromosomes();
 };
 

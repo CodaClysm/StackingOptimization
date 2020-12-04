@@ -71,3 +71,22 @@ string State::toString_h()
     return returnString;
 }
 
+double State::getUtilization()
+{
+    int volume = ControllerSettings::envShape.getVolume();
+    double utilized = 0;
+    for(int i = 0; i < state.size(); i++)
+    {
+        for(int j = 0; j < state[1].size(); j++)
+        {
+            for(int k = 0; k < state[i][j].size(); k++)
+            {
+                if(state[i][j][k])
+                {
+                    utilized++;
+                }
+            }
+        }
+    }
+    return (double)utilized/volume;
+}

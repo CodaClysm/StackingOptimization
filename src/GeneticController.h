@@ -8,14 +8,16 @@ using namespace std;
 class GeneticController{
 
 public:
-    static void run(vector<AbsFeature> features, Shape envShape, int numIndividuals,
+    static void run(vector<AbsFeature*> features, Shape envShape, int numIndividuals,
                 vector<Shape> possibleShapes);
 
 private:
-    static vector<Shape> GenerateShapeOrder(vector<Shape> possibleShapes);
-    static Individual startIndividual(Chromosomes c);
+    static vector<int> generateShapeOrder(vector<Shape> possibleShapes);
+    static Individual startIndividual(Individual i);
     static double calculateFitness(Individual i);
-    static vector<Chromosomes> selection(vector<Individual> individuals);
+    static vector<Individual> selection(vector<Individual> oldPop);
     static Chromosomes crossover(Chromosomes c1, Chromosomes c2);
+    static Chromosomes crossover2(Chromosomes c1, Chromosomes c2);
     static Chromosomes mutation(Chromosomes c);
+    static Individual weightedSelect(double total, vector<Individual> pop, vector<double> fitVec);
 };
