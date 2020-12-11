@@ -28,6 +28,13 @@ int Shape::getVolume()
     return volume;
 }
 
+string Shape::toString()
+{
+    string s = "";
+    s += "x:" + to_string(x) + " y:" + to_string(y) + " z:" + to_string(z);
+    return s;
+}
+
 
 /*
 * Function: getUniqueOrientations

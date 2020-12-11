@@ -27,6 +27,8 @@ Individual::Individual()
 
 Individual::Individual(Chromosomes c)
 {
+    counter++;
+    id = counter;
     chromosomes = c;
     shapesToPack = ControllerSettings::shapesToPack;
     features = ControllerSettings::features;
@@ -49,11 +51,17 @@ void Individual::start()
     // Bring shape set local
     shapesToPack = ControllerSettings::shapesToPack;
     vector<Shape> shapeSet = ControllerSettings::possibleShapes;
-    for(int i = 0; i < shapesToPack.size(); i++)
+    int i = 1;
+    for(int s : shapesToPack)
     {
-        cout << id <<"- ShapeProgress: " << i << "/" << shapesToPack.size() << endl;
+        if(i == 1)
+        {
+            cout << id <<"- ShapeProgress: " << i << "/" << shapesToPack.size() << endl;
+        }
+        
+    
         // Get list of all possible places to put the new shape
-        vector<State> possibleStates = env.getPossibleStates(shapeSet[shapesToPack[i]]);
+        vector<State> possibleStates = env.getPossibleStates(shapeSet[s]);
         // If there is no place the put the shape, then the instance is over
         if(possibleStates.size() == 0)
         {
@@ -62,7 +70,9 @@ void Individual::start()
 
         // Find the best place to put the shape
         State bestState = findBestPosition(possibleStates);
+        //cout << id << bestState.toString_h() << endl;
         env.updateState(bestState);
+        i++;
     }
 }
 

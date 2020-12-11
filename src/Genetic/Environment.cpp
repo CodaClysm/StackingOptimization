@@ -52,12 +52,12 @@ vector<State> Environment::getPossibleStates(Shape shapeToPlace)
                             {
                                 break;
                             }
-                            returnVector.push_back(previous);
+                            returnVector.push_back(mergeStates(previous));
                             break;
                         }
                         else if(!isCollision(shapeState) && y == shape.getY() - 1)
                         {
-                            returnVector.push_back(shapeState);
+                            returnVector.push_back(mergeStates(shapeState));
                         }
                         previous = shapeState;
                     }
@@ -149,7 +149,7 @@ State Environment::mergeStates(State shapeState)
         {
             for(int x = 0; x < envX; x++)
             {
-                tempState.state[y][z][x] == currentState.state[y][z][x]
+                tempState.state[y][z][x] = currentState.state[y][z][x]
                                             || shapeState.state[y][z][x];
             }
         }

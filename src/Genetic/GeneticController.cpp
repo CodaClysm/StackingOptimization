@@ -104,6 +104,7 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop){
         fitnessVec.push_back(calculateFitness(i));
     }
 
+    vector<Individual> temp;
     //Reserve the best three performing individuals for the next population
     for(int j = 0; j < 3; j++)
     {
@@ -130,13 +131,14 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop){
             DataLogger::log("########################################################\n");
 
         }
-        newPop.push_back(oldPop[maxIndex]);
+        newPop.push_back(Individual(oldPop[maxIndex].getChromosomes()));
+        temp.push_back(oldPop[maxIndex]);
         oldPop.erase(oldPop.begin() + maxIndex);
         fitnessVec.erase(fitnessVec.begin() + maxIndex);
     }
 
-    //add the best performers back into the vectors
-    for(Individual i : newPop)
+    //add the best performers back into the oldPop to be included for crossover
+    for(Individual i : temp)
     {
         oldPop.push_back(i);
         fitnessVec.push_back(calculateFitness(i));

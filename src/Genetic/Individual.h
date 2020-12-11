@@ -10,7 +10,7 @@ class Individual
 {
 private:
     static int counter;
-    int id;
+    
     double calculateHeuristic(State s);
     State findBestPosition(vector<State> states);
     vector<int> shapesToPack; //grab this from the static class in the constructor
@@ -18,6 +18,7 @@ private:
     Environment env;
     Chromosomes chromosomes;
 public:
+    int id;
     Individual(Chromosomes c);
     Individual();
     void start();
