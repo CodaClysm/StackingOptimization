@@ -213,13 +213,15 @@ Chromosomes GeneticController::crossover2(Chromosomes c1, Chromosomes c2)
 
 Chromosomes GeneticController::mutation(Chromosomes c)
 {
+    double mutationProbability = .15;
+     
     vector<double> newWeights;
     vector<double> newExponents;
     double newBias;
     for(int i = 0; i < c.getWeights().size(); i++)
     {
         double rand = Util::randDouble(0,1);
-        if(rand < .15)
+        if(rand < mutationProbability)
         {
             double normRand = Util::randNormal(0, 2);
             newWeights.push_back(c.getWeights()[i] * normRand);
@@ -233,7 +235,7 @@ Chromosomes GeneticController::mutation(Chromosomes c)
     for(int i = 0; i < c.getWeights().size(); i++)
     {
         double rand = Util::randDouble(0,1);
-        if(rand < .15)
+        if(rand < mutationProbability)
         {
             double normRand = Util::randNormal(0, 2);
             newExponents.push_back(c.getExponents()[i] * normRand);
@@ -245,7 +247,7 @@ Chromosomes GeneticController::mutation(Chromosomes c)
     }
 
     double rand = Util::randDouble(0,1);
-    if(rand < .15)
+    if(rand < mutationProbability)
     {
         double normRand = Util::randNormal(0, 2);
         newBias = c.getBias() * normRand;

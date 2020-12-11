@@ -33,13 +33,10 @@ int main() {
 
 	for(int i = 0; i < 100; i++)
 	{
-		cout << Util::randDouble(1.2, 5.6) << endl;
+		cout << Util::randNormal(0, 2) << endl;
 	}
 
 
 	Logger::close();
-	// pause to see output.
-	cout << "Press any key to continue...";
-	cin.get();
 	return 1;
 }
