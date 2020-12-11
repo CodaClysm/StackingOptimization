@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 
 using namespace std;
 class Chromosomes
@@ -14,5 +15,6 @@ public:
     vector<double> getWeights();
     vector<double> getExponents();
     double getBias();
+    string toString();
 };
 

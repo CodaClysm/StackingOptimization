@@ -12,7 +12,7 @@ double TransitionZ::calculateFeature(State s)
     Here, a transition occurs for each edge of an occupied cell that is adjacent to an unoccupied cell along the X axis. The walls count as occupied cells. 
     */
 
-    for(int y = 0; y<sVector.size(); y++)
+    for(int y = 0; y < sVector.size(); y++)
     {
         for(int z = 0; z < sVector[0].size(); z++)
         {
@@ -28,7 +28,7 @@ double TransitionZ::calculateFeature(State s)
                             returnVal++;
                         }
                     }
-                    else if(z+1 >= sVector.size())
+                    else if(z+1 >= sVector[0].size())
                     {
                         returnVal++;
                         if(sVector[y][z-1][x])

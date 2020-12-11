@@ -2,7 +2,7 @@
 #include "AbsFeature.h"
 #include "../Genetic/State.h"
 
-class HeightDifference : AbsFeature
+class HeightDifference : public AbsFeature
 {
 public:
 	double calculateFeature(State s);

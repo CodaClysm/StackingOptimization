@@ -9,7 +9,7 @@ double NumWells::calculateFeature(State s)
 
     for(int z = 0; z < sVector[0].size(); z++)
     {
-        for(int x = 0; x < sVector[0][0].size(); z++)
+        for(int x = 0; x < sVector[0][0].size(); x++)
         {
             int currentColHeight = getColumnHeight(z, x, s);
             vector<int> heights;

@@ -2,7 +2,7 @@
 #include "AbsFeature.h"
 #include "../Genetic/State.h"
 
-class NumHoles : AbsFeature
+class NumHoles : public AbsFeature
 {
 public:
 	double calculateFeature(State s);

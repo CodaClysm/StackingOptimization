@@ -9,6 +9,8 @@ using namespace std;
 class Individual
 {
 private:
+    static int counter;
+    int id;
     double calculateHeuristic(State s);
     State findBestPosition(vector<State> states);
     vector<int> shapesToPack; //grab this from the static class in the constructor

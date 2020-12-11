@@ -2,7 +2,7 @@
 #include "AbsFeature.h"
 #include "../Genetic/State.h"
 
-class MaxHeight : AbsFeature
+class MaxHeight : public AbsFeature
 {
 public:
 	double calculateFeature(State s);

@@ -2,7 +2,7 @@
 #include "AbsFeature.h"
 #include "../Genetic/State.h"
 
-class TransitionZ : AbsFeature
+class TransitionZ : public AbsFeature
 {
 public:
 	double calculateFeature(State s);

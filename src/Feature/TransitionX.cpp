@@ -11,7 +11,6 @@ double TransitionX::calculateFeature(State s)
     (if two horizontally adjacent cells are not both occupied or free, they count as a transition cell)
     Here, a transition occurs for each edge of an occupied cell that is adjacent to an unoccupied cell along the X axis. The walls count as occupied cells. 
     */
-
     for(int y = 0; y<sVector.size(); y++)
     {
         for(int z = 0; z < sVector[0].size(); z++)

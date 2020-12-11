@@ -2,7 +2,7 @@
 #include "AbsFeature.h"
 #include "../Genetic/State.h"
 
-class Smoothness : AbsFeature
+class Smoothness : public AbsFeature
 {
 public:
 	double calculateFeature(State s);

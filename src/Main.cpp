@@ -1,8 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <stdlib.h>
-#include <time.h>
-#include "Genetic/ControllerSettings.h"
+#include "Genetic/GeneticController.h"
 #include "Feature/MaxHeight.h"
 #include "Feature/NumHoles.h"
 #include "Feature/HeightDifference.h"
@@ -29,7 +27,35 @@ int main() {
 	MaxWellDepth f8;
 	NumWells f9;
 
+	vector<AbsFeature*> features;
+	features.push_back(&f1);
+	features.push_back(&f2);
+	features.push_back(&f3);
+	features.push_back(&f4);
+	features.push_back(&f5);
+	features.push_back(&f6);
+	features.push_back(&f7);
+	features.push_back(&f8);
+	features.push_back(&f9);
+
+	Shape env(7, 10, 5);
+
+	int numIndividuals = 10;
+
+	Shape s1(2,2,2);
+	Shape s2(1,5,1);
+	Shape s3(1,3,3);
+	Shape s4(2,3,4);
+	Shape s5(4,2,1);
+
+	vector<Shape> shapes;
+	shapes.push_back(s1);
+	shapes.push_back(s2);
+	shapes.push_back(s3);
+	shapes.push_back(s4);
+	shapes.push_back(s5);
 	
+	GeneticController::run(features, env,  numIndividuals, shapes);
 
 	return 1;
 }

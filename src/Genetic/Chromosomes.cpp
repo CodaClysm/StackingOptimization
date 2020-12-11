@@ -10,8 +10,8 @@ Chromosomes::Chromosomes()
     {
         // Initialize weights to random number between -50 and 50
         weights.push_back(Util::randDouble(-50,50));
-        // Initialize exponents to random number between -5 and 5
-        exponents.push_back(Util::randDouble(-5,5));
+        // Initialize exponents to random number between 0 and 5
+        exponents.push_back(Util::randDouble(0,5));
     }
     //initialize bias to random number between -100 and 100
     bias = Util::randDouble(-100,100);
@@ -38,4 +38,20 @@ vector<double> Chromosomes::getExponents()
 double Chromosomes::getBias()
 {
     return bias;
+}
+
+string Chromosomes::toString()
+{
+    string s = "Weights: ";
+    for(double d : weights)
+    {
+        s += to_string(d) + ", ";
+    }
+    s += "\nExponents: ";
+    for(double d : exponents)
+    {
+        s+= to_string(d) + ", ";
+    }
+    s += "\nBias: " + to_string(bias) + "\n";
+    return s;
 }

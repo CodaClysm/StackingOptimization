@@ -2,14 +2,18 @@
 #include "ControllerSettings.h"
 #include "../Utils/Util.h"
 #include "../Utils/DebugLogger.h"
+#include "../Utils/DataLogger.h"
 #include <thread>
+#include <iostream>
 #include <future>
+#include <math.h>
 using namespace std;
 
 void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
                 int numIndividuals, vector<Shape> possibleShapes){
 
-    
+    DebugLogger::start(Level::ERROR);
+    DataLogger::start();
     if(numIndividuals < 5)
     {
         DebugLogger::error("numIndividuals value selected too small. Must be > 4");
@@ -22,6 +26,8 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
     ControllerSettings::numIndividuals = numIndividuals;
     ControllerSettings::possibleShapes = possibleShapes;
 
+    //create initial shape list
+    ControllerSettings::shapesToPack = generateShapeOrder(possibleShapes);
 
     //Create initial population
     vector<Individual> population;
@@ -30,10 +36,16 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
         population.push_back(Individual());
     }
 
+    int generation = 0;
     // infinite loop to run infinite generations. Each loop is one generation
-    while(1)
+    while(generation < 500)
     {
-        ControllerSettings::shapesToPack = generateShapeOrder(possibleShapes);
+        string s = "Starting Generation: ";
+        s += to_string(generation) + " --- ";
+        cout << s;
+        DataLogger::log(s);
+
+
         vector<future<Individual>> futures;
 
         // Start to process each individual as a future
@@ -50,7 +62,11 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
 
         // From the next population through selection
         population = selection(population);
+        generation++;
     }
+
+    DebugLogger::close();
+    DataLogger::close();
 }
 
 vector<int> GeneticController::generateShapeOrder(vector<Shape> possibleShapes){
@@ -100,6 +116,19 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop){
                 max = fitnessVec[i];
                 maxIndex = i;
             }
+        }
+        if(j == 0)
+        {
+            //print the best result for the generation
+            string s = "Best Utilization: " + to_string(max) + "\n";
+            cout << s;
+            DataLogger::log(s);
+            DataLogger::log("Best state:\n");
+            DataLogger::log(oldPop[maxIndex].getEnvironment().getCurrentState().toString_h());
+            DataLogger::log("Current Best Chromosome:\n");
+            DataLogger::log(oldPop[maxIndex].getChromosomes().toString());
+            DataLogger::log("########################################################\n");
+
         }
         newPop.push_back(oldPop[maxIndex]);
         oldPop.erase(oldPop.begin() + maxIndex);
@@ -238,7 +267,7 @@ Chromosomes GeneticController::mutation(Chromosomes c)
         if(rand < mutationProbability)
         {
             double normRand = Util::randNormal(0, 2);
-            newExponents.push_back(c.getExponents()[i] * normRand);
+            newExponents.push_back(abs(c.getExponents()[i] * normRand));
         }
         else
         {
