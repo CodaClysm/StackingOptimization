@@ -2,19 +2,16 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
-#include "State.h"
-#include "ControllerSettings.h"
-#include "Logger.h"
-#include "Environment.h"
-#include "Util.h"
+#include "Genetic/ControllerSettings.h"
+#include "Feature/AbsFeature.h"
+#include "Genetic/State.h"
+
 using namespace std;
 
 int main() {
 	// seed rand
 	srand(time(NULL));
 
-	// Create logger
-	Logger::start(Level::INFO);
 
 	//Shape s(20, 25, 20);
 	//ControllerSettings::envShape = s;
@@ -31,12 +28,6 @@ int main() {
 
 	//cout << "# possible locations: " << possibleStates.size() << endl;
 
-	for(int i = 0; i < 100; i++)
-	{
-		cout << Util::randNormal(0, 2) << endl;
-	}
 
-
-	Logger::close();
 	return 1;
 }

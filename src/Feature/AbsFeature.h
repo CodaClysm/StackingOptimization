@@ -1,5 +1,5 @@
 #pragma once
-#include "State.h"
+#include "../Genetic/State.h"
 
 class AbsFeature
 {

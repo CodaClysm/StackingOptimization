@@ -1,7 +1,7 @@
 #pragma once
 #include "State.h"
 #include "Shape.h"
-#include "AbsFeature.h"
+#include "../Feature/AbsFeature.h"
 #include <vector>
 
 using namespace std;

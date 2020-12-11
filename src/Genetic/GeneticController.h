@@ -1,12 +1,12 @@
 #pragma once
 #include <vector>
-#include "AbsFeature.h"
+#include "Feature/AbsFeature.h"
 #include "Shape.h"
 #include "Chromosomes.h"
 #include "Individual.h"
 using namespace std;
-class GeneticController{
 
+class GeneticController{
 public:
     static void run(vector<AbsFeature*> features, Shape envShape, int numIndividuals,
                 vector<Shape> possibleShapes);

@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Shape.h"
-#include "AbsFeature.h"
+#include "Feature/AbsFeature.h"
 #include "Environment.h"
 #include "Chromosomes.h"
 #include "State.h"

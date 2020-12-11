@@ -1,8 +1,7 @@
-#include "Logger.h"
+#include "DataLogger.h"
 #include <iostream>
 #include <filesystem>
-Level Logger::level = Level::ERROR;
-ofstream Logger::outStream = ofstream();
+ofstream DataLogger::outStream = ofstream();
 
 /*
 * Function: start
@@ -13,12 +12,11 @@ ofstream Logger::outStream = ofstream();
     warn level logs all warning and errors
     error level logs all errors
 */
-void Logger::start(Level level)
+void DataLogger::start()
 {
     if(!outStream.is_open())
     {
-        Logger::level = level;
-        string filename = "logs/log-";
+        string filename = "logs/DataLog-";
         time_t currentTime = time(0);
         filename += ctime(&currentTime);
         filename.replace(filename.length()-1, 1, "");
@@ -43,9 +41,9 @@ void Logger::start(Level level)
 * Description: 
 *    writes a message to log file with prefix ERROR
 */
-void Logger::error(string msg)
+void DataLogger::error(string msg)
 {
-    if(outStream.is_open() && (level >= Level::ERROR))
+    if(outStream.is_open())
     {
         string message = "ERROR: ";
         message += msg;
@@ -62,9 +60,9 @@ void Logger::error(string msg)
 * Description: 
 *    writes a message to log file with prefix WARN
 */
-void Logger::warn(string msg)
+void DataLogger::warn(string msg)
 {
-    if(outStream.is_open() && (level >= Level::WARN))
+    if(outStream.is_open())
     {
         string message = "WARN: ";
         message += msg;
@@ -81,9 +79,9 @@ void Logger::warn(string msg)
 * Description: 
 *    writes a message to log file with prefix INFO
 */
-void Logger::info(string msg)
+void DataLogger::info(string msg)
 {
-    if(outStream.is_open() && (level >= Level::INFO))
+    if(outStream.is_open())
     {
         string message = "INFO: ";
         message += msg;
@@ -100,7 +98,7 @@ void Logger::info(string msg)
 *   closes the outStream at the end of execution.
 */
 
-void Logger::close()
+void DataLogger::close()
 {
     if(outStream.is_open())
     {

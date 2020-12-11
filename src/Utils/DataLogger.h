@@ -5,19 +5,12 @@
 #include <fstream>
 using namespace std;
 
-enum Level {
-    ERROR = 1,
-    WARN = 2,
-    INFO = 3
-};
-
-class Logger
+class DataLogger
 {
 private:
-    static Level level;
     static ofstream outStream;
 public:
-    static void start(Level level);
+    static void start();
     static void error(string msg);
     static void warn(string msg);
     static void info(string msg);
