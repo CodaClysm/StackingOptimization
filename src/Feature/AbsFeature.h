@@ -5,5 +5,7 @@ class AbsFeature
 {
 public:
 	virtual double calculateFeature(State s) = 0;
+	virtual ~AbsFeature() {};
+
 };
 

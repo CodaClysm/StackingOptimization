@@ -1,5 +1,5 @@
 #include "Chromosomes.h"
-#include "Util.h"
+#include "../Utils/Util.h"
 #include "ControllerSettings.h"
 
 // Randomly initialize a chromosome based on the number of features

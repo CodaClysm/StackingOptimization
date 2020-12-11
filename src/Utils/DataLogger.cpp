@@ -41,51 +41,11 @@ void DataLogger::start()
 * Description: 
 *    writes a message to log file with prefix ERROR
 */
-void DataLogger::error(string msg)
+void DataLogger::log(string msg)
 {
     if(outStream.is_open())
     {
-        string message = "ERROR: ";
-        message += msg;
-        outStream << message;
-        outStream.flush();
-    }
-}
-
-
-/*
-* Function: warn
-* Parameters: 
-*   string msg: msg to write to log file 
-* Description: 
-*    writes a message to log file with prefix WARN
-*/
-void DataLogger::warn(string msg)
-{
-    if(outStream.is_open())
-    {
-        string message = "WARN: ";
-        message += msg;
-        outStream << message;
-        outStream.flush();
-    }
-}
-
-
-/*
-* Function: info
-* Parameters: 
-*   string msg: msg to write to log file 
-* Description: 
-*    writes a message to log file with prefix INFO
-*/
-void DataLogger::info(string msg)
-{
-    if(outStream.is_open())
-    {
-        string message = "INFO: ";
-        message += msg;
-        outStream << message;
+        outStream << msg;
         outStream.flush();
     }
 }

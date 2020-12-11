@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "Feature/AbsFeature.h"
+#include "../Feature/AbsFeature.h"
 #include "Shape.h"
 #include "Chromosomes.h"
 #include "Individual.h"

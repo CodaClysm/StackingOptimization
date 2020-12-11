@@ -1,0 +1,1 @@
+g++ src/*.cpp src/Feature/*.cpp src/Genetic/*.cpp src/Utils/*.cpp -o run.exe -pthread

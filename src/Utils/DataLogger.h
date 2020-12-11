@@ -11,9 +11,7 @@ private:
     static ofstream outStream;
 public:
     static void start();
-    static void error(string msg);
-    static void warn(string msg);
-    static void info(string msg);
+    static void log(string msg);
     static void close();
 
 };

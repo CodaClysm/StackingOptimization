@@ -18,7 +18,7 @@ void DebugLogger::start(Level level)
     if(!outStream.is_open())
     {
         DebugLogger::level = level;
-        string filename = "logs/debugLog-";
+        string filename = "logs/debuglog-";
         time_t currentTime = time(0);
         filename += ctime(&currentTime);
         filename.replace(filename.length()-1, 1, "");

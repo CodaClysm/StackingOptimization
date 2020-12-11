@@ -1,7 +1,7 @@
 #include "GeneticController.h"
 #include "ControllerSettings.h"
-#include "Util.h"
-#include "Logger.h"
+#include "../Utils/Util.h"
+#include "../Utils/DebugLogger.h"
 #include <thread>
 #include <future>
 using namespace std;
@@ -12,7 +12,7 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
     
     if(numIndividuals < 5)
     {
-        Logger::error("numIndividuals value selected too small. Must be > 4");
+        DebugLogger::error("numIndividuals value selected too small. Must be > 4");
         exit(0);
     }
 
@@ -154,7 +154,7 @@ Individual GeneticController::weightedSelect(double total, vector<Individual> po
         counter += fitVec[i];
         i++;
     }
-    Logger::error("weighted Select in Genetic Controller shouldnt get here...");
+    DebugLogger::error("weighted Select in Genetic Controller shouldnt get here...");
     exit(0);
 }
 

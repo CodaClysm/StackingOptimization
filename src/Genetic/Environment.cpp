@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Environment.h"
 #include "ControllerSettings.h"
-#include "Logger.h"
+#include "../Utils/DebugLogger.h"
 
 /*
 * Function: Environment ctor
@@ -65,7 +65,7 @@ vector<State> Environment::getPossibleStates(Shape shapeToPlace)
             }
         }
         else{
-            Logger::error("Environment.cpp - shape larger than environment");
+            DebugLogger::error("Environment.cpp - shape larger than environment");
         }
 
     }
