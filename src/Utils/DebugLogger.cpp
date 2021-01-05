@@ -1,6 +1,5 @@
 #include "DebugLogger.h"
 #include <iostream>
-#include <filesystem>
 Level DebugLogger::level = Level::ERROR;
 ofstream DebugLogger::outStream = ofstream();
 

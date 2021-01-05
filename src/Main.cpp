@@ -55,7 +55,8 @@ int main() {
 	shapes.push_back(s4);
 	shapes.push_back(s5);
 	
-	GeneticController::run(features, env,  numIndividuals, shapes);
+	GeneticController::run(features, env,  numIndividuals, shapes, "DataLog-Tue Jan  5 14_21_56 2021.txt");
+	// GeneticController::run(features, env,  numIndividuals, shapes);
 
 	return 1;
 }

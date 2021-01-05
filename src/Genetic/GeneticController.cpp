@@ -1,16 +1,20 @@
+#include <thread>
+#include <iostream>
+#include <future>
+#include <math.h>
+#include <chrono>
+#include <fstream>
 #include "GeneticController.h"
 #include "ControllerSettings.h"
 #include "../Utils/Util.h"
 #include "../Utils/DebugLogger.h"
 #include "../Utils/DataLogger.h"
-#include <thread>
-#include <iostream>
-#include <future>
-#include <math.h>
 using namespace std;
 
+int GeneticController::generation = 1;
+
 void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
-                int numIndividuals, vector<Shape> possibleShapes){
+                int numIndividuals, vector<Shape> possibleShapes, string file){
 
     DebugLogger::start(Level::ERROR);
     DataLogger::start();
@@ -26,25 +30,33 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
     ControllerSettings::numIndividuals = numIndividuals;
     ControllerSettings::possibleShapes = possibleShapes;
 
-    //create initial shape list
-    ControllerSettings::shapesToPack = generateShapeOrder(possibleShapes);
-
     //Create initial population
     vector<Individual> population;
-    for(int i = 0; i < numIndividuals; i++)
+    if(file == "none")
     {
-        population.push_back(Individual());
+        cout << "starting new run\n";
+        for(int i = 0; i < numIndividuals; i++)
+        {
+            population.push_back(Individual());
+        }
+    }
+    else
+    {
+        population = getIndividualFromFile(file);
     }
 
-    int generation = 0;
     // infinite loop to run infinite generations. Each loop is one generation
-    while(generation < 500)
+    while(generation <= 500)
     {
-        string s = "Starting Generation: ";
+        chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+        string s = "Generation: ";
         s += to_string(generation) + " --- ";
         cout << s;
         DataLogger::log(s);
 
+        //generate the new shape list
+        ControllerSettings::shapesToPack = generateShapeOrder(possibleShapes);
 
         vector<future<Individual>> futures;
 
@@ -63,6 +75,11 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
         // From the next population through selection
         population = selection(population);
         generation++;
+
+        chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+        cout << " --- exec Time: " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[s]" << std::endl;
+
     }
 
     DebugLogger::close();
@@ -121,13 +138,20 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop){
         if(j == 0)
         {
             //print the best result for the generation
-            string s = "Best Utilization: " + to_string(max) + "\n";
+            string s = "Best Utilization: " + to_string(max * 100) + "%";
             cout << s;
+            s += "\n";
             DataLogger::log(s);
             DataLogger::log("Best state:\n");
             DataLogger::log(oldPop[maxIndex].getEnvironment().getCurrentState().toString_h());
             DataLogger::log("Current Best Chromosome:\n");
             DataLogger::log(oldPop[maxIndex].getChromosomes().toString());
+            DataLogger::log("---------------------------------------------------------\n");
+            DataLogger::log("All Chromosomes:\n");
+            for(Individual i : oldPop)
+            {
+                DataLogger::log(i.getChromosomes().toString());
+            }
             DataLogger::log("########################################################\n");
 
         }
@@ -288,4 +312,118 @@ Chromosomes GeneticController::mutation(Chromosomes c)
         newBias = c.getBias();
     }
     return Chromosomes(newWeights, newExponents, newBias);
+}
+
+vector<Individual> GeneticController::getIndividualFromFile(string fileName)
+{
+    vector<Individual> population;
+    fileName = "logs/"+fileName;
+    cout << "continuing execution from " << fileName << endl;
+    ifstream oldRun(fileName);
+    if(!oldRun.good())
+    {
+        cout << "specified file does not exist. Exiting...\n";
+        exit(0);
+    }
+    
+    //parse file to get weights of old run. 
+    string previousGenerationString2;
+    string previousGenerationString;
+    string generationString;
+    string temp;
+    
+    while(getline(oldRun, temp))
+    {
+        if(temp.find("Generation") != -1)
+        {
+            previousGenerationString2 = previousGenerationString;
+            previousGenerationString = generationString;
+            generationString = temp + "\n";
+            //copy over all of the logs to the new log file except for the latest run which will be re-run
+            if(previousGenerationString != "")
+            {
+                DataLogger::log(previousGenerationString2);
+            }
+        }
+        else
+        {
+            generationString += temp + "\n";
+        }
+    }
+    string parseStr = previousGenerationString;
+
+    //get generation
+    temp = parseStr.substr(parseStr.find(" ") + 1);
+    temp = temp.substr(0,temp.find(" "));
+    generation = stoi(temp);
+
+    //get weights, exponents, and bias
+    temp = parseStr.substr(parseStr.find("All Chromosomes:")+17);
+
+    bool end = false;
+    while(!end)
+    {
+        string weightsStr = temp.substr(0, temp.find("Exponents: "));
+        temp = temp.substr(weightsStr.length());
+
+        string exponentsStr = temp.substr(0, temp.find("Bias: "));
+        temp = temp.substr(exponentsStr.length());
+
+        string biasStr;
+        if(temp.find("Weights: ") != -1)
+        {
+            biasStr = temp.substr(0, temp.find("Weights: "));
+        }
+        else
+        {
+            biasStr = temp.substr(0, temp.find("#"));
+            end = true;
+        }
+        temp = temp.substr(biasStr.length());
+
+        //we now have strings with the chromosome information, parse these strings for values
+        vector<double> fileWeights;
+        vector<double> fileExponents;
+        double fileBias;
+
+        weightsStr = weightsStr.substr(weightsStr.find(" ") + 1);
+        exponentsStr = exponentsStr.substr(exponentsStr.find(" ") + 1);
+        biasStr = biasStr.substr(biasStr.find(" ") + 1);
+        while(weightsStr.length() > 1)
+        {
+            string tempWeight = weightsStr.substr(0, weightsStr.find(","));
+            weightsStr = weightsStr.substr(tempWeight.length() + 2);
+            fileWeights.push_back(atof(tempWeight.c_str()));
+
+            string tempExponent = exponentsStr.substr(0, exponentsStr.find(","));
+            exponentsStr = exponentsStr.substr(tempExponent.length() + 2);
+            fileExponents.push_back(atof(tempExponent.c_str()));
+        }
+        fileBias = atof(biasStr.c_str());
+        
+        //check that number of features is correct
+        if(fileWeights.size() != ControllerSettings::features.size())
+        {
+            string error =  "feature mismatch: loaded file is for " + to_string(fileWeights.size()) +  " features.\n" 
+                + "Controller is currently set to run with " + to_string(ControllerSettings::features.size()) + " features.\n";
+            cout << "ERROR: " << error;
+            DebugLogger::error(error);
+            exit(0);
+        }
+        Chromosomes c(fileWeights, fileExponents, fileBias);
+        population.push_back(Individual(c));
+    }
+
+    //check that the population size is correct.
+    if(population.size() != ControllerSettings::numIndividuals)
+    {
+        string error = "population size mismatch: loaded file is for " + to_string(population.size()) + " individuals.\n"
+            + "Controller is currently set to run with " + to_string(ControllerSettings::numIndividuals) + " individuals.\n";
+            cout << "ERROR: " << error;
+            DebugLogger::error(error);
+            exit(0);
+    }
+
+    cout << "done parsing file. Resuming execution....\n";
+    return population;
 }

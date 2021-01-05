@@ -9,7 +9,7 @@ using namespace std;
 class GeneticController{
 public:
     static void run(vector<AbsFeature*> features, Shape envShape, int numIndividuals,
-                vector<Shape> possibleShapes);
+                vector<Shape> possibleShapes, string file = "none");
 
 private:
     static vector<int> generateShapeOrder(vector<Shape> possibleShapes);
@@ -20,4 +20,6 @@ private:
     static Chromosomes crossover2(Chromosomes c1, Chromosomes c2);
     static Chromosomes mutation(Chromosomes c);
     static Individual weightedSelect(double total, vector<Individual> pop, vector<double> fitVec);
+    static vector<Individual> getIndividualFromFile(string fileName);
+    static int generation;
 };

@@ -1,8 +1,8 @@
-#include "Individual.h"
-#include "ControllerSettings.h"
 #include <iostream>
 #include <math.h>
-
+#include "Individual.h"
+#include "ControllerSettings.h"
+#include "../Utils/Util.h"
 #include "../Feature/MaxHeight.h"
 #include "../Feature/NumHoles.h"
 #include "../Feature/HeightDifference.h"
@@ -52,14 +52,11 @@ void Individual::start()
     shapesToPack = ControllerSettings::shapesToPack;
     vector<Shape> shapeSet = ControllerSettings::possibleShapes;
     int i = 1;
+    bool useRandom = false;
+
     for(int s : shapesToPack)
     {
-        if(i == 1)
-        {
-            cout << id <<"- ShapeProgress: " << i << "/" << shapesToPack.size() << endl;
-        }
-        
-    
+       
         // Get list of all possible places to put the new shape
         vector<State> possibleStates = env.getPossibleStates(shapeSet[s]);
         // If there is no place the put the shape, then the instance is over
@@ -67,11 +64,19 @@ void Individual::start()
         {
             break;
         }
-
-        // Find the best place to put the shape
-        State bestState = findBestPosition(possibleStates);
-        //cout << id << bestState.toString_h() << endl;
-        env.updateState(bestState);
+        if(!useRandom)
+        {
+            // Find the best place to put the shape
+            State bestState = findBestPosition(possibleStates);
+            //cout << id << bestState.toString_h() << endl;
+            env.updateState(bestState);
+        }
+        else
+        {
+            //update state with random state
+            int randSelection = Util::randInt(0,possibleStates.size()-1);
+            env.updateState(possibleStates[randSelection]);     
+        } 
         i++;
     }
 }
