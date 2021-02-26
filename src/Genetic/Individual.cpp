@@ -1,17 +1,10 @@
+#include <future>
 #include <iostream>
 #include <math.h>
 #include "Individual.h"
 #include "ControllerSettings.h"
 #include "../Utils/Util.h"
-#include "../Feature/MaxHeight.h"
-#include "../Feature/NumHoles.h"
-#include "../Feature/HeightDifference.h"
-#include "../Feature/Smoothness.h"
-#include "../Feature/TransitionX.h"
-#include "../Feature/TransitionY.h"
-#include "../Feature/TransitionZ.h"
-#include "../Feature/MaxWellDepth.h"
-#include "../Feature/NumWells.h"
+#include "../Feature/AbsFeature.h"
 
 using namespace std;
 
@@ -34,16 +27,21 @@ Individual::Individual(Chromosomes c)
     features = ControllerSettings::features;
 }
 
-double Individual::calculateHeuristic(State s)
+vector<double> Individual::calculateHeuristic(State s, vector<vector<double>> featureVals)
 {
-    double returnVal = 0;
-    for(int i = 0; i < features.size(); i++)
+    vector<double> heuristicScores;
+    for(int stateIndex = 0; stateIndex < featureVals[0].size(); stateIndex++)
     {
-        returnVal += chromosomes.getWeights()[i]
-         * pow(features[i]->calculateFeature(s), chromosomes.getExponents()[i]);
+        double sum = 0;
+        for(int featureIndex = 0; featureIndex < features.size(); featureIndex++)
+        {
+            sum += chromosomes.getWeights()[featureIndex]
+                * pow(featureVals[featureIndex][stateIndex], chromosomes.getExponents()[featureIndex]);
+        }
+        sum += chromosomes.getBias();
+        heuristicScores.push_back(sum);
     }
-    returnVal += chromosomes.getBias();
-    return returnVal;
+    return heuristicScores;
 }
 
 void Individual::start()
@@ -81,19 +79,40 @@ void Individual::start()
     }
 }
 
+vector<double> Individual::startFeatureCalculation(vector<State> states, int index)
+{
+    return ControllerSettings::features[index]->calculateFeature(states);
+}
+
 State Individual::findBestPosition(vector<State> states)
 {
-    State bestState = states[0];
-    double bestStateVal = calculateHeuristic(states[0]);
-    int i = 0;
-    for(State s : states)
+    vector<vector<double>> featureVals;
+    vector<future<vector<double>>> featureFuture;
+
+    //start futures for each feature so that the GPU can start processing jobs for all features concurrently. 
+    for(int i = 0; i < features.size(); i++)
     {
-        //cout << id <<"- stateProgress: " << i << "/" << states.size() << endl;
-        double val = calculateHeuristic(s);
-        if(val > bestStateVal)
+        featureFuture.push_back(async(startFeatureCalculation, states, i));
+    }
+
+    // Collect the futures
+    for(int i = 0; i < featureFuture.size(); i++)
+    {
+        featureVals.push_back(featureFuture[i].get());
+    }
+
+    vector<double> stateHeuristicVector = calculateHeuristic(states[0], featureVals);
+    State bestState = states[0];
+    double bestVal = stateHeuristicVector[0];
+
+    int i = 0;
+    for(double val : stateHeuristicVector)
+    {
+        // cout << id <<"- stateProgress: " << i << "/" << states.size() << endl;
+        if(val > bestVal)
         {
-            bestState = s;
-            bestStateVal = val;
+            bestState = states[i];
+            bestVal = val;
         }
         i++;
     }

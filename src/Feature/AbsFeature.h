@@ -1,10 +1,11 @@
 #pragma once
+#include <vector>
 #include "../Genetic/State.h"
 
 class AbsFeature
 {
 public:
-	virtual double calculateFeature(State s) = 0;
+	virtual vector<double> calculateFeature(vector<State> states) = 0;
 	virtual ~AbsFeature() {};
 
 };

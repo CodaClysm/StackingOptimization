@@ -11,9 +11,10 @@ class Individual
 private:
     static int counter;
     
-    double calculateHeuristic(State s);
+    vector<double> calculateHeuristic(State s, vector<vector<double>> featureVals);
     State findBestPosition(vector<State> states);
-    vector<int> shapesToPack; //grab this from the static class in the constructor
+    static vector<double> startFeatureCalculation(vector<State> states, int index);
+    vector<int> shapesToPack;
     vector<AbsFeature*> features;
     Environment env;
     Chromosomes chromosomes;
