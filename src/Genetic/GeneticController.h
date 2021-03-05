@@ -18,8 +18,9 @@ private:
     static vector<Individual> selection(vector<Individual> oldPop);
     static Chromosomes crossover(Chromosomes c1, Chromosomes c2);
     static Chromosomes crossover2(Chromosomes c1, Chromosomes c2);
-    static Chromosomes mutation(Chromosomes c);
-    static Individual weightedSelect(double total, vector<Individual> pop, vector<double> fitVec);
+    static Chromosomes mutation(Chromosomes c, double rate);
+    static Individual weightedSelect(vector<Individual> pop, vector<double> fitVec);
+    static Individual ticketedSelect(vector<Individual> pop, vector<double> fitVec);
     static vector<Individual> getIndividualFromFile(string fileName);
     static int generation;
 };

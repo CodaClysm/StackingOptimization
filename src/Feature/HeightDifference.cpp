@@ -3,11 +3,11 @@
 #include <iostream>
 double HeightDifference::calculateFeature(State s)
 {
-    double returnVal = 0;
     auto sVector = s.state;
     MaxHeight m;
     double maxHeight = m.calculateFeature(s);
     int minHeight = 0;
+    bool flag = false;
     for(int y = 0; y < sVector.size(); y++)
     {
         for(int z = 0; z < sVector[y].size(); z++)
@@ -16,11 +16,21 @@ double HeightDifference::calculateFeature(State s)
             {
                 if(sVector[y][z][x])
                 {
-                    minHeight = y;
-                    break;
+                    bool innerFlag = true;
+                    for(int yy = y; yy < sVector.size(); yy++)
+                    {
+                        if(sVector[yy][z][x]) innerFlag = true;
+                    }
+                    if(innerFlag)
+                    {
+                        minHeight = y;
+                    }
+                    if(flag) break;
                 }
             }
+            if(flag) break;
         }
+        if(flag) break;
     }
 
     return maxHeight - minHeight;

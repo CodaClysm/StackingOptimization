@@ -169,23 +169,24 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop){
     }
 
     // Select individuals to perform crossover
-    double totalFitness = 0;
-    for(double d : fitnessVec)
-    {
-        totalFitness += d;
-    }
-
     vector<Chromosomes> newChromosomes;
     while(newChromosomes.size() < ControllerSettings::numIndividuals - 3)
     {
-        Individual ind1 = weightedSelect(totalFitness, oldPop, fitnessVec);
-        Individual ind2 = weightedSelect(totalFitness, oldPop, fitnessVec);
+        Individual ind1 = weightedSelect(oldPop, fitnessVec);
+        Individual ind2 = weightedSelect(oldPop, fitnessVec);
         newChromosomes.push_back(crossover2(ind1.getChromosomes(), ind2.getChromosomes()));
     }
 
+    double rate = .15;
     for(int i = 0; i < newChromosomes.size(); i++)
     {
-        newChromosomes[i] = mutation(newChromosomes[i]);
+        newChromosomes[i] = mutation(newChromosomes[i], rate);
+    }
+
+    // add a mutation rate decay of .25% per generation with minimum of 1%
+    if(rate > .01)
+    {
+        rate -= .0025;
     }
 
     for(Chromosomes c : newChromosomes)
@@ -195,8 +196,13 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop){
     return newPop;
 }
 
-Individual GeneticController::weightedSelect(double total, vector<Individual> pop, vector<double> fitVec)
+Individual GeneticController::weightedSelect(vector<Individual> pop, vector<double> fitVec)
 {
+    double total = 0;
+    for(double d : fitVec)
+    {
+        total += d;
+    }
     double rand = Util::randDouble(0, total);
     int i = 0;
     double counter = 0;
@@ -212,6 +218,45 @@ Individual GeneticController::weightedSelect(double total, vector<Individual> po
     DebugLogger::error("weighted Select in Genetic Controller shouldnt get here...");
     exit(0);
 }
+
+Individual GeneticController::ticketedSelect(vector<Individual> pop, vector<double> fitVec)
+{
+    vector<Individual> sortedInd;
+    double smallestVal = fitVec[0];
+    int smallestIndex = 0;
+    int totalTickets = 0;
+    for(int i = 0; i<fitVec.size(); i++)
+    {
+        totalTickets += i+1;
+        for(int j = 0; j < fitVec.size(); j++)
+        {
+            if(fitVec[j] < smallestVal)
+            {
+                smallestVal = fitVec[j];
+                smallestIndex = j;
+            }
+        }
+        sortedInd.push_back(pop[smallestIndex]);
+        pop.erase(pop.begin()+smallestIndex);
+        fitVec.erase(fitVec.begin()+smallestIndex);
+    }
+
+    //get random ticket
+    int randTicket = Util::randInt(1, totalTickets);
+    int curTicket = 0;
+    for(int i = 0; i < sortedInd.size(); i++)
+    {
+        curTicket += i+1;
+        if(randTicket <= curTicket)
+        {
+            return sortedInd[i];
+        }
+    }
+    DebugLogger::error("Ticketed Select in Genetic Controller shouldnt get here...");
+    exit(0);
+}
+
+
 
 Chromosomes GeneticController::crossover(Chromosomes c1, Chromosomes c2)
 {
@@ -266,9 +311,9 @@ Chromosomes GeneticController::crossover2(Chromosomes c1, Chromosomes c2)
     return Chromosomes(newWeights, newExponents, newBias);
 }
 
-Chromosomes GeneticController::mutation(Chromosomes c)
+Chromosomes GeneticController::mutation(Chromosomes c, double rate)
 {
-    double mutationProbability = .15;
+    double mutationProbability = rate;
      
     vector<double> newWeights;
     vector<double> newExponents;

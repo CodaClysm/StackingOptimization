@@ -56,7 +56,6 @@ void Individual::start()
 
     for(int s : shapesToPack)
     {
-       
         // Get list of all possible places to put the new shape
         vector<State> possibleStates = env.getPossibleStates(shapeSet[s]);
         // If there is no place the put the shape, then the instance is over
