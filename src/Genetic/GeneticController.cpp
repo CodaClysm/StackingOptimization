@@ -55,25 +55,43 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
         cout << s;
         DataLogger::log(s);
 
-        //generate the new shape list
-        ControllerSettings::shapesToPack = generateShapeOrder(possibleShapes);
-
-        vector<future<Individual>> futures;
-
-        // Start to process each individual as a future
-        for(Individual i : population)
+        // Loop through 3 iterations to get an average of individual performance
+        vector<double> fitnessVector(population.size(), 0.0);
+        int numIterations = 5;
+        for(int iteration = 0; iteration < numIterations; iteration++)
         {
-            futures.push_back(async(startIndividual, i));
+            //generate the new shape list
+            ControllerSettings::shapesToPack = generateShapeOrder(possibleShapes);
+
+            vector<future<Individual>> futures;
+
+            // Start to process each individual as a future
+            for(Individual i : population)
+            {
+                futures.push_back(async(startIndividual, i));
+            }
+
+            // Wait for all of them to finish
+            for(int i = 0; i < population.size(); i++)
+            {
+                population[i] = futures[i].get();
+            }
+
+            //evaluate individuals
+            for(int i = 0; i < population.size(); i++)
+            {
+                fitnessVector[i] += calculateFitness(population[i]);
+            }
         }
-
-        // Wait for all of them to finish
-        for(int i = 0; i < population.size(); i++)
+        
+        // divide all fitnesses by numIterations to get average
+        for(int i = 0; i < fitnessVector.size(); i++)
         {
-            population[i] = futures[i].get();
+            fitnessVector[i] /= numIterations;
         }
 
         // From the next population through selection
-        population = selection(population);
+        population = selection(population, fitnessVector);
         generation++;
 
         chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
@@ -111,16 +129,8 @@ double GeneticController::calculateFitness(Individual i){
     return s.getUtilization();
 }
 
-vector<Individual> GeneticController::selection(vector<Individual> oldPop){
+vector<Individual> GeneticController::selection(vector<Individual> oldPop, vector<double> fitnessVec){
     vector<Individual> newPop;
-
-    // Get fitness of each individual
-    vector<double> fitnessVec;
-    for(Individual i : oldPop)
-    {
-        fitnessVec.push_back(calculateFitness(i));
-    }
-
     vector<Individual> temp;
     //Reserve the best three performing individuals for the next population
     for(int j = 0; j < 3; j++)

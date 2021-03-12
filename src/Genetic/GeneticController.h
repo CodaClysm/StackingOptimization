@@ -15,7 +15,7 @@ private:
     static vector<int> generateShapeOrder(vector<Shape> possibleShapes);
     static Individual startIndividual(Individual i);
     static double calculateFitness(Individual i);
-    static vector<Individual> selection(vector<Individual> oldPop);
+    static vector<Individual> selection(vector<Individual> oldPop, vector<double> fitnessVector);
     static Chromosomes crossover(Chromosomes c1, Chromosomes c2);
     static Chromosomes crossover2(Chromosomes c1, Chromosomes c2);
     static Chromosomes mutation(Chromosomes c, double rate);

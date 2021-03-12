@@ -24,5 +24,6 @@ public:
     void start();
     Environment getEnvironment();
     Chromosomes getChromosomes();
+    void resetEnvironment();
 };
 
