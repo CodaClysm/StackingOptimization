@@ -39,7 +39,7 @@ double Individual::calculateHeuristic(State s)
     double returnVal = 0;
     for (int i = 0; i < features.size(); i++)
     {
-        returnVal += chromosomes.getWeights()[i] * pow(features[i]->calculateFeature(s), chromosomes.getExponents()[i]);
+        returnVal += chromosomes.getWeights()[i] * features[i]->calculateFeature(s);
     }
     returnVal += chromosomes.getBias();
     return returnVal;

@@ -22,8 +22,9 @@ private:
     static Individual weightedSelect(vector<Individual> pop, vector<double> fitVec);
     static Individual ticketedSelect(vector<Individual> pop, vector<double> fitVec);
     static vector<Individual> getIndividualFromFile(string fileName);
+    static int streakSum();
     static int generation;
     static double mutationRate;
     static double previousFitness;
-    static int fitnessStreak;
+    static vector<int> fitnessStreak;
 };

@@ -33,7 +33,7 @@ int main()
 
 	vector<AbsFeature *> features;
 	features.push_back(&f1);
-	features.push_back(&f2);
+	//features.push_back(&f2);
 	features.push_back(&f3);
 	// features.push_back(&f4);
 	features.push_back(&f5);

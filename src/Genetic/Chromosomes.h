@@ -7,13 +7,11 @@ class Chromosomes
 {
 private:
    vector<double> weights;
-   vector<double> exponents;
    double bias;
 public:
     Chromosomes();
-    Chromosomes(vector<double> weights, vector<double> exponents, double bias);
+    Chromosomes(vector<double> weights, double bias);
     vector<double> getWeights();
-    vector<double> getExponents();
     double getBias();
     string toString();
 };

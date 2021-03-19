@@ -14,7 +14,7 @@ using namespace std;
 int GeneticController::generation = 1;
 double GeneticController::mutationRate = .15;
 double GeneticController::previousFitness = 0;
-int GeneticController::fitnessStreak = 0;
+vector<int> GeneticController::fitnessStreak = vector<int>();
 
 void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
                 int numIndividuals, vector<Shape> possibleShapes, string file){
@@ -100,12 +100,22 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
         chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
         cout << " --- exec Time: " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[s]";
-        cout << " --- m/s: " << mutationRate << "/" << fitnessStreak << std::endl;
+        cout << " --- m/s: " << mutationRate << "/" << streakSum() << std::endl;
 
     }
 
     DebugLogger::close();
     DataLogger::close();
+}
+
+int GeneticController::streakSum()
+{
+    int sum = 0;
+    for(int val : fitnessStreak)
+    {
+        sum += val;
+    }
+    return sum;
 }
 
 vector<int> GeneticController::generateShapeOrder(vector<Shape> possibleShapes){
@@ -171,21 +181,26 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop, vecto
             //adjust mutation rate
             if(max > previousFitness)
             {
-                fitnessStreak++;
+                fitnessStreak.push_back(1);
             }
             else
             {
-                fitnessStreak--;
+                fitnessStreak.push_back(-1);
+            }
+            if(fitnessStreak.size() > 10)
+            {
+                fitnessStreak.erase(fitnessStreak.begin());
             }
             previousFitness = max;
 
-            if(fitnessStreak > 0)
+            int sum = streakSum();
+            if(sum > 0)
             {
-                mutationRate = .25 - (fitnessStreak*fitnessStreak*.01);
+                mutationRate = .25 - (sum * sum * .01);
             }
             else
             {
-                mutationRate = .25 + (fitnessStreak*fitnessStreak*.01);
+                mutationRate = .25 + (sum * sum * .01);
             }
             if(mutationRate > .5)
             {
@@ -213,8 +228,8 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop, vecto
     vector<Chromosomes> newChromosomes;
     while(newChromosomes.size() < ControllerSettings::numIndividuals - 3)
     {
-        Individual ind1 = weightedSelect(oldPop, fitnessVec);
-        Individual ind2 = weightedSelect(oldPop, fitnessVec);
+        Individual ind1 = ticketedSelect(oldPop, fitnessVec);
+        Individual ind2 = ticketedSelect(oldPop, fitnessVec);
         newChromosomes.push_back(crossover2(ind1.getChromosomes(), ind2.getChromosomes()));
     }
 
@@ -259,9 +274,12 @@ Individual GeneticController::ticketedSelect(vector<Individual> pop, vector<doub
     double smallestVal = fitVec[0];
     int smallestIndex = 0;
     int totalTickets = 0;
-    for(int i = 0; i<fitVec.size(); i++)
+    int i = 0;
+    while(fitVec.size() != 0)
     {
         totalTickets += i+1;
+        smallestVal = fitVec[0];
+        smallestIndex = 0;
         for(int j = 0; j < fitVec.size(); j++)
         {
             if(fitVec[j] < smallestVal)
@@ -273,6 +291,7 @@ Individual GeneticController::ticketedSelect(vector<Individual> pop, vector<doub
         sortedInd.push_back(pop[smallestIndex]);
         pop.erase(pop.begin()+smallestIndex);
         fitVec.erase(fitVec.begin()+smallestIndex);
+        i++;
     }
 
     //get random ticket
@@ -299,24 +318,20 @@ Chromosomes GeneticController::crossover(Chromosomes c1, Chromosomes c2)
     int split2 = Util::randInt((numFeatures/2) + 1, numFeatures);
 
     vector<double> newWeights;
-    vector<double> newExponents;
     double newBias;
     for(int i = 0; i < c1.getWeights().size(); i++)
     {
         if(i <= split1)
         {
             newWeights.push_back(c1.getWeights()[i]);
-            newExponents.push_back(c1.getExponents()[i]);
         }
         else if(i <= split2)
         {
             newWeights.push_back(c2.getWeights()[i]);
-            newExponents.push_back(c2.getExponents()[i]);
         }
         else
         {
             newWeights.push_back(c1.getWeights()[i]);
-            newExponents.push_back(c1.getExponents()[i]);
         }
     }
     int coinFlip = Util::randInt(0,1);
@@ -328,21 +343,19 @@ Chromosomes GeneticController::crossover(Chromosomes c1, Chromosomes c2)
     {
         newBias = c2.getBias();
     }
-    return Chromosomes(newWeights, newExponents, newBias);
+    return Chromosomes(newWeights, newBias);
 }
 
 Chromosomes GeneticController::crossover2(Chromosomes c1, Chromosomes c2)
 {
     vector<double> newWeights;
-    vector<double> newExponents;
     double newBias;
     for(int i = 0; i < c1.getWeights().size(); i++)
     {
         newWeights.push_back((c1.getWeights()[i] + c2.getWeights()[i]) / 2);
-        newExponents.push_back((c1.getExponents()[i] + c2.getExponents()[i]) / 2);
     }
     newBias = (c1.getBias() + c2.getBias()) /2;
-    return Chromosomes(newWeights, newExponents, newBias);
+    return Chromosomes(newWeights, newBias);
 }
 
 Chromosomes GeneticController::mutation(Chromosomes c)
@@ -364,20 +377,6 @@ Chromosomes GeneticController::mutation(Chromosomes c)
         }
     }
 
-    for(int i = 0; i < c.getWeights().size(); i++)
-    {
-        double rand = Util::randDouble(0,1);
-        if(rand < mutationRate)
-        {
-            double normRand = Util::randNormal(0, 2);
-            newExponents.push_back(abs(c.getExponents()[i] * normRand));
-        }
-        else
-        {
-            newExponents.push_back(c.getExponents()[i]);
-        }
-    }
-
     double rand = Util::randDouble(0,1);
     if(rand < mutationRate)
     {
@@ -388,7 +387,7 @@ Chromosomes GeneticController::mutation(Chromosomes c)
     {
         newBias = c.getBias();
     }
-    return Chromosomes(newWeights, newExponents, newBias);
+    return Chromosomes(newWeights, newBias);
 }
 
 vector<Individual> GeneticController::getIndividualFromFile(string fileName)
@@ -460,7 +459,6 @@ vector<Individual> GeneticController::getIndividualFromFile(string fileName)
 
         //we now have strings with the chromosome information, parse these strings for values
         vector<double> fileWeights;
-        vector<double> fileExponents;
         double fileBias;
 
         weightsStr = weightsStr.substr(weightsStr.find(" ") + 1);
@@ -471,10 +469,6 @@ vector<Individual> GeneticController::getIndividualFromFile(string fileName)
             string tempWeight = weightsStr.substr(0, weightsStr.find(","));
             weightsStr = weightsStr.substr(tempWeight.length() + 2);
             fileWeights.push_back(atof(tempWeight.c_str()));
-
-            string tempExponent = exponentsStr.substr(0, exponentsStr.find(","));
-            exponentsStr = exponentsStr.substr(tempExponent.length() + 2);
-            fileExponents.push_back(atof(tempExponent.c_str()));
         }
         fileBias = atof(biasStr.c_str());
         
@@ -487,7 +481,7 @@ vector<Individual> GeneticController::getIndividualFromFile(string fileName)
             DebugLogger::error(error);
             exit(0);
         }
-        Chromosomes c(fileWeights, fileExponents, fileBias);
+        Chromosomes c(fileWeights, fileBias);
         population.push_back(Individual(c));
     }
 
