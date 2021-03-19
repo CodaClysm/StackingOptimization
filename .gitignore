@@ -8,5 +8,6 @@
 .history/
 run.exe
 logs/*
+SavedData/
 !logs/.gitkeep
 notes.md

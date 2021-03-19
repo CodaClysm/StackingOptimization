@@ -33,12 +33,12 @@ int main()
 
 	vector<AbsFeature *> features;
 	features.push_back(&f1);
-	//features.push_back(&f2);
+	features.push_back(&f2);
 	features.push_back(&f3);
 	// features.push_back(&f4);
-	features.push_back(&f5);
-	features.push_back(&f6);
-	features.push_back(&f7);
+	// features.push_back(&f5);
+	// features.push_back(&f6);
+	// features.push_back(&f7);
 	// features.push_back(&f8);
 	// features.push_back(&f9);
 	// features.push_back(&f10);
@@ -49,20 +49,20 @@ int main()
 	int numIndividuals = 10;
 
 	//set1
-	// Shape s1(2, 1, 1);
-	// Shape s2(4, 1, 1);
-	// Shape s3(2, 2, 2);
-	// Shape s4(4, 4, 1);
-	// Shape s5(4, 2, 2);
-	// Shape s6(4, 3, 2);
-	// Shape s7(3, 2, 2);
+	Shape s1(2, 1, 1);
+	Shape s2(4, 1, 1);
+	Shape s3(2, 2, 2);
+	Shape s4(4, 4, 1);
+	Shape s5(4, 2, 2);
+	Shape s6(4, 3, 2);
+	Shape s7(3, 2, 2);
 
 	//set2
-	Shape s1(2,2,2);
-	Shape s2(1,5,1);
-	Shape s3(1,3,3);
-	Shape s4(2,3,4);
-	Shape s5(4,2,1);
+	// Shape s1(2,2,2);
+	// Shape s2(1,5,1);
+	// Shape s3(1,3,3);
+	// Shape s4(2,3,4);
+	// Shape s5(4,2,1);
 
 	vector<Shape> shapes;
 	shapes.push_back(s1);
@@ -70,8 +70,8 @@ int main()
 	shapes.push_back(s3);
 	shapes.push_back(s4);
 	shapes.push_back(s5);
-	// shapes.push_back(s6);
-	// shapes.push_back(s7);
+	shapes.push_back(s6);
+	shapes.push_back(s7);
 
 	GeneticController::run(features, env, numIndividuals, shapes);
 
