@@ -12,6 +12,9 @@
 using namespace std;
 
 int GeneticController::generation = 1;
+double GeneticController::mutationRate = .15;
+double GeneticController::previousFitness = 0;
+int GeneticController::fitnessStreak = 0;
 
 void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
                 int numIndividuals, vector<Shape> possibleShapes, string file){
@@ -96,7 +99,8 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
 
         chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 
-        cout << " --- exec Time: " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[s]" << std::endl;
+        cout << " --- exec Time: " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() << "[s]";
+        cout << " --- m/s: " << mutationRate << "/" << fitnessStreak << std::endl;
 
     }
 
@@ -163,7 +167,34 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop, vecto
                 DataLogger::log(i.getChromosomes().toString());
             }
             DataLogger::log("########################################################\n");
+            
+            //adjust mutation rate
+            if(max > previousFitness)
+            {
+                fitnessStreak++;
+            }
+            else
+            {
+                fitnessStreak--;
+            }
+            previousFitness = max;
 
+            if(fitnessStreak > 0)
+            {
+                mutationRate = .25 - (fitnessStreak*fitnessStreak*.01);
+            }
+            else
+            {
+                mutationRate = .25 + (fitnessStreak*fitnessStreak*.01);
+            }
+            if(mutationRate > .5)
+            {
+                mutationRate = .5;
+            }
+            if(mutationRate < .01)
+            {
+                mutationRate = .01;
+            }
         }
         newPop.push_back(Individual(oldPop[maxIndex].getChromosomes()));
         temp.push_back(oldPop[maxIndex]);
@@ -187,16 +218,9 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop, vecto
         newChromosomes.push_back(crossover2(ind1.getChromosomes(), ind2.getChromosomes()));
     }
 
-    double rate = .15;
     for(int i = 0; i < newChromosomes.size(); i++)
     {
-        newChromosomes[i] = mutation(newChromosomes[i], rate);
-    }
-
-    // add a mutation rate decay of .25% per generation with minimum of 1%
-    if(rate > .01)
-    {
-        rate -= .0025;
+        newChromosomes[i] = mutation(newChromosomes[i]);
     }
 
     for(Chromosomes c : newChromosomes)
@@ -321,17 +345,15 @@ Chromosomes GeneticController::crossover2(Chromosomes c1, Chromosomes c2)
     return Chromosomes(newWeights, newExponents, newBias);
 }
 
-Chromosomes GeneticController::mutation(Chromosomes c, double rate)
-{
-    double mutationProbability = rate;
-     
+Chromosomes GeneticController::mutation(Chromosomes c)
+{ 
     vector<double> newWeights;
     vector<double> newExponents;
     double newBias;
     for(int i = 0; i < c.getWeights().size(); i++)
     {
         double rand = Util::randDouble(0,1);
-        if(rand < mutationProbability)
+        if(rand < mutationRate)
         {
             double normRand = Util::randNormal(0, 2);
             newWeights.push_back(c.getWeights()[i] * normRand);
@@ -345,7 +367,7 @@ Chromosomes GeneticController::mutation(Chromosomes c, double rate)
     for(int i = 0; i < c.getWeights().size(); i++)
     {
         double rand = Util::randDouble(0,1);
-        if(rand < mutationProbability)
+        if(rand < mutationRate)
         {
             double normRand = Util::randNormal(0, 2);
             newExponents.push_back(abs(c.getExponents()[i] * normRand));
@@ -357,7 +379,7 @@ Chromosomes GeneticController::mutation(Chromosomes c, double rate)
     }
 
     double rand = Util::randDouble(0,1);
-    if(rand < mutationProbability)
+    if(rand < mutationRate)
     {
         double normRand = Util::randNormal(0, 2);
         newBias = c.getBias() * normRand;
