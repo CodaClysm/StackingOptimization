@@ -11,3 +11,4 @@ logs/*
 SavedData/
 !logs/.gitkeep
 notes.md
+Plot Data.ipynb

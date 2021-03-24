@@ -10,6 +10,8 @@ class GeneticController{
 public:
     static void run(vector<AbsFeature*> features, Shape envShape, int numIndividuals,
                 vector<Shape> possibleShapes, string file = "none");
+    static void generateShapeFile(vector<Shape> possibleShapes, string fileName,Shape envShape);
+    static vector<vector<int>> getShapeOrderFromFile(string fileName);
 
 private:
     static vector<int> generateShapeOrder(vector<Shape> possibleShapes);

@@ -32,6 +32,7 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
     ControllerSettings::envShape = envShape;
     ControllerSettings::numIndividuals = numIndividuals;
     ControllerSettings::possibleShapes = possibleShapes;
+    vector<vector<int>> shapeOrderVector = GeneticController::getShapeOrderFromFile("ShapeSet1.txt");
 
     //Create initial population
     vector<Individual> population;
@@ -64,7 +65,7 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
         for(int iteration = 0; iteration < numIterations; iteration++)
         {
             //generate the new shape list
-            ControllerSettings::shapesToPack = generateShapeOrder(possibleShapes);
+            ControllerSettings::shapesToPack = shapeOrderVector[generation*numIterations + iteration];
 
             vector<future<Individual>> futures;
 
@@ -116,6 +117,50 @@ int GeneticController::streakSum()
         sum += val;
     }
     return sum;
+}
+
+void GeneticController::generateShapeFile(vector<Shape> possibleShapes, string fileName, Shape envShape)
+{
+    ControllerSettings::envShape = envShape;
+    ControllerSettings::possibleShapes = possibleShapes;
+    ofstream outStream = ofstream();
+    if(!outStream.is_open())
+    {
+        outStream.open(fileName);
+    }
+    for(int i = 0; i < 5000; i++)
+    {
+        vector<int> order = generateShapeOrder(possibleShapes);
+        for(int j = 0; j < order.size(); j++)
+        {
+            outStream << order[j] << " ";
+        }
+        outStream << "\n";
+    }
+    outStream.close();
+}
+
+vector<vector<int>> GeneticController::getShapeOrderFromFile(string fileName)
+{
+    ifstream shapeFile(fileName);
+    string line;
+    string temp;
+    vector<vector<int>> shapeList;
+    while(getline(shapeFile, line))
+    {
+        vector<int> tempVec;
+        int spaceIndex = line.find(" ");
+        while(spaceIndex != -1)
+        {
+            temp = line.substr(0,spaceIndex);
+            line = line.substr(spaceIndex+1);
+            tempVec.push_back(stoi(temp));
+            spaceIndex = line.find(" ");
+        }
+        shapeList.push_back(tempVec);
+    }
+    shapeFile.close();
+    return shapeList;
 }
 
 vector<int> GeneticController::generateShapeOrder(vector<Shape> possibleShapes){
