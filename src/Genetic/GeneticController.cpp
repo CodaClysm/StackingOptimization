@@ -81,10 +81,11 @@ void GeneticController::run(vector<AbsFeature*> features, Shape envShape,
                 population[i] = futures[i].get();
             }
 
-            //evaluate individuals
+            //evaluate individuals and reset environment
             for(int i = 0; i < population.size(); i++)
             {
                 fitnessVector[i] += calculateFitness(population[i]);
+                population[i].resetEnvironment();
             }
         }
         
@@ -211,8 +212,8 @@ vector<Individual> GeneticController::selection(vector<Individual> oldPop, vecto
             cout << s;
             s += "\n";
             DataLogger::log(s);
-            DataLogger::log("Best state:\n");
-            DataLogger::log(oldPop[maxIndex].getEnvironment().getCurrentState().toString_h());
+            // DataLogger::log("Best state:\n");
+            // DataLogger::log(oldPop[maxIndex].getEnvironment().getCurrentState().toString_h());
             DataLogger::log("Current Best Chromosome:\n");
             DataLogger::log(oldPop[maxIndex].getChromosomes().toString());
             DataLogger::log("---------------------------------------------------------\n");
