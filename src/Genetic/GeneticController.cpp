@@ -414,7 +414,8 @@ Chromosomes GeneticController::mutation(Chromosomes c)
         if(rand < mutationRate)
         {
             double normRand = Util::randNormal(0, 2);
-            newWeights.push_back(c.getWeights()[i] * normRand);
+            int randInt = Util::randInt(-5,5);
+            newWeights.push_back((c.getWeights()[i] * normRand) + randInt);
         }
         else
         {
@@ -426,7 +427,8 @@ Chromosomes GeneticController::mutation(Chromosomes c)
     if(rand < mutationRate)
     {
         double normRand = Util::randNormal(0, 2);
-        newBias = c.getBias() * normRand;
+        int randInt = Util::randInt(-5,5);
+        newBias = (c.getBias() * normRand) + randInt;
     }
     else
     {

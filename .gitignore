@@ -6,9 +6,9 @@
 *.code-workspace
 # Local History for Visual Studio Code
 .history/
+.ipynb*/
 run.exe
 logs/*
-SavedData/
 !logs/.gitkeep
 notes.md
 Plot Data.ipynb

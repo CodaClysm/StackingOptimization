@@ -1,0 +1,52 @@
+sizes:
+	size 1: 6x6x6
+shapes: 
+	shape 1: 
+		Shape s1(2, 1, 1);
+		Shape s2(4, 1, 1);
+		Shape s3(2, 2, 2);
+		Shape s4(4, 4, 1);
+		Shape s5(4, 2, 2);
+		Shape s6(4, 3, 2);
+		Shape s7(3, 2, 2);
+	shape 2:
+		Shape s1(2,2,2);
+		Shape s2(1,5,1);
+		Shape s3(1,3,3);
+		Shape s4(2,3,4);
+		Shape s5(4,2,1);
+features:
+	set 1: 
+		MaxHeight
+		Holes
+		HeightDifference
+	set 2:
+		transitionx
+		transitiony
+		transitionz
+	set 3:
+		MaxHeight
+		Holes
+		HeightDifference
+		transitionx
+		transitiony
+		transitionz
+	set 4:
+
+		MaxHeight
+		HeightDifference
+		transitionx
+		transitiony
+		transitionz
+	set 5:
+		Smoothness
+		MaxWellDepth
+		NumWells
+	set 6:
+		all features
+	random:
+		random
+
+		use a sliding average window
+		use legend with different line types
+		
