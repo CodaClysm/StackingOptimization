@@ -44,6 +44,18 @@ features:
 		NumWells
 	set 6:
 		all features
+	set 7:
+		MaxHeight
+		Holes
+		HeightDifference
+		bad feature 1
+		bad feature 2
+	set 8:
+		transitionx
+		transitiony
+		transitionz
+		bad feature 1
+		bad feature 2
 	random:
 		random
 

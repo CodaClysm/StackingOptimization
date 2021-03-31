@@ -32,17 +32,17 @@ int main()
 	BadFeature2 f11;
 
 	vector<AbsFeature *> features;
-	features.push_back(&f1);
-	features.push_back(&f2);
-	features.push_back(&f3);
+	// features.push_back(&f1);
+	// features.push_back(&f2);
+	// features.push_back(&f3);
 	// features.push_back(&f4);
 	features.push_back(&f5);
 	features.push_back(&f6);
 	features.push_back(&f7);
 	// features.push_back(&f8);
 	// features.push_back(&f9);
-	// features.push_back(&f10);
-	// features.push_back(&f11);
+	features.push_back(&f10);
+	features.push_back(&f11);
 
 	Shape env(6, 6, 6);
 
